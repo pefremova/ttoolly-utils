@@ -29,9 +29,9 @@ def _get_dict_diff(d1: Dict[Any, Any], d2: Dict[Any, Any], parent_key: str = "")
     not_in_second = set(d1.keys()).difference(d2.keys())
     not_in_first = set(d2.keys()).difference(d1.keys())
     if not_in_first:
-        text.append(f"Not in first dict: {list(not_in_first)!r}")
+        text.append(f"Is not in the first dict: {list(not_in_first)!r}")
     if not_in_second:
-        text.append(f"Not in second dict: {list(not_in_second)!r}")
+        text.append(f"Is not in the second dict: {list(not_in_second)!r}")
     for key in sorted(set(d1.keys()).intersection(d2.keys())):
         if d1[key] != d2[key]:
             if isinstance(d1[key], dict) and isinstance(d2[key], dict):
@@ -71,10 +71,10 @@ def _get_list_diff(l1: List[Any], l2: List[Any]) -> str:
     errors = []
     for i in range(max(len(l1), len(l2))):
         if i >= len(l1):
-            errors.append(f"[line {i}]: Not in first list")
+            errors.append(f"[line {i}]: Is not in the first list")
             continue
         if i >= len(l2):
-            errors.append(f"[line {i}]: Not in second list")
+            errors.append(f"[line {i}]: Is not in the second list")
             continue
 
         l1_value = l1[i]

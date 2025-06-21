@@ -1,8 +1,9 @@
 import pytest
+
 from ttoolly_utils.utils import (
-    get_all_subclasses,
     continue_on_fail,
     convert_size_to_bytes,
+    get_all_subclasses,
 )
 
 
