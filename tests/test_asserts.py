@@ -1,9 +1,9 @@
 import pytest
 
 from ttoolly_utils.asserts import (
-    assert_status_code,
-    assert_list_equal,
     assert_dict_equal,
+    assert_list_equal,
+    assert_status_code,
 )
 
 
@@ -35,19 +35,19 @@ from ttoolly_utils.asserts import (
                 }
             },
             {"qwe": {"a": 1, "b": 1}},
-            "[qwe]:\n  Not in first dict: [%s]" % repr("b"),
+            "[qwe]:\n  Is not in the first dict: [%s]" % repr("b"),
         ),
         (
             {"qwe": {"a": 1, "b": 1}},
             {"qwe": {"a": 1}},
-            "[qwe]:\n  Not in second dict: [%s]" % repr("b"),
+            "[qwe]:\n  Is not in the second dict: [%s]" % repr("b"),
         ),
         (
             {"qwe": "q", "z": ""},
             {
                 "qwe": 1,
             },
-            "Not in second dict: [%s]\n[qwe]: %s != 1" % (repr("z"), repr("q")),
+            "Is not in the second dict: [%s]\n[qwe]: %s != 1" % (repr("z"), repr("q")),
         ),
         ({"qwe": "й"}, {"qwe": "йцу"}, "[qwe]: й != йцу"),
         (
@@ -70,9 +70,9 @@ from ttoolly_utils.asserts import (
             {"qwe": {"a": 2, "b": 1}},
             "[qwe]:\n  [qwe][a]: 1 != 2\n  [qwe][b]: 2 != 1",
         ),
-        ({"qwe": [1]}, {"qwe": [1, 2]}, "[qwe]:\n[line 1]: Not in first list"),
-        ({"qwe": ""}, {}, "Not in second dict: [%s]" % repr("qwe")),
-        ({}, {"qwe": ""}, "Not in first dict: [%s]" % repr("qwe")),
+        ({"qwe": [1]}, {"qwe": [1, 2]}, "[qwe]:\n[line 1]: Is not in the first list"),
+        ({"qwe": ""}, {}, "Is not in the second dict: [%s]" % repr("qwe")),
+        ({}, {"qwe": ""}, "Is not in the first dict: [%s]" % repr("qwe")),
     ),
 )
 def test_assert_dict_equal(dict1, dict2, expected_message):
@@ -94,26 +94,26 @@ def test_assert_dict_equal_equal(custom_message):
         (
             [1],
             [1, 2],
-            "[line 1]: Not in first list",
+            "[line 1]: Is not in the first list",
         ),
-        ([{}], [{}, {"q": 1}], "[line 1]: Not in first list"),
+        ([{}], [{}, {"q": 1}], "[line 1]: Is not in the first list"),
         (
             [{"q": 1}, {"z": 2}],
             [{"w": 1}, {"z": 2}],
-            "[line 0]: Not in first dict: [%s]\nNot in second dict: [%s]"
+            "[line 0]: Is not in the first dict: [%s]\nIs not in the second dict: [%s]"
             % (repr("w"), repr("q")),
         ),
         (
             [[], [1]],
             [[], [1, 2]],
-            "[line 1]: [line 1]: Not in first list",
+            "[line 1]: [line 1]: Is not in the first list",
         ),
         (
             [1, 2],
             [1],
-            "[line 1]: Not in second list",
+            "[line 1]: Is not in the second list",
         ),
-        ([{}, {"q": 1}], [{}], "[line 1]: Not in second list"),
+        ([{}, {"q": 1}], [{}], "[line 1]: Is not in the second list"),
         (
             [
                 1,

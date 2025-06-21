@@ -1,9 +1,17 @@
+import os
 import re
+from datetime import date, datetime, time, timedelta
+from io import BufferedWriter, BytesIO
+
 import pytest
+
 from ttoolly_utils.randomizer import (
-    get_random_email_value,
-    get_random_domain_value,
     get_randname,
+    get_random_color,
+    get_random_datetime_value,
+    get_random_domain_value,
+    get_random_email_value,
+    get_random_image,
 )
 
 
@@ -80,7 +88,7 @@ def test_get_randname_long_all_default():
     assert re.match(r"([\s\S]{10})\1[\s\S]{5}", value, re.MULTILINE)
 
 
-@pytest.mark.parametrize("length", [10, 62, 63, 500])
+@pytest.mark.parametrize("length", [6, 10, 62, 63, 500])
 def test_get_random_domain_value(length):
     value = get_random_domain_value(length)
     assert len(value) == length
@@ -111,3 +119,64 @@ def test_get_random_email_value_too_short():
     with pytest.raises(ValueError) as exc_info:
         get_random_email_value(2)
     assert str(exc_info.value) == "Email length cannot be less than 3"
+
+
+def test_get_random_rgb_color():
+    value = get_random_color("rgb")
+    assert re.match(r"rgb\(\d{1,3}, \d{1,3}, \d{1,3}\)", value)
+
+
+def test_get_random_hex_color():
+    value = get_random_color("hex")
+    assert re.match(r"#[a-f0-9]{6}", value)
+
+
+def test_get_random_color_wrong_type():
+    with pytest.raises(NotImplementedError) as exc_info:
+        get_random_color("color")
+    assert (
+        str(exc_info.value)
+        == "Color type 'color' is not supported. Use 'rgb' or 'hex'."
+    )
+
+
+def test_get_random_datetime_value_without_params():
+    value = get_random_datetime_value()
+    assert (
+        datetime.combine(date.today() - timedelta(days=30), time(0, 0))
+        < value
+        < datetime.combine(date.today() + timedelta(days=31), time(0, 0))
+    )
+
+
+def test_get_random_datetime_value_with_params():
+    start = datetime.now()
+    end = datetime.now() + timedelta(seconds=1)
+    value = get_random_datetime_value(start, end)
+    assert start < value < end
+
+
+def test_get_random_image():
+    image = get_random_image()
+    assert isinstance(image, BytesIO)
+
+
+def test_get_random_image_with_path():
+    image = get_random_image(path="/tmp")
+    assert isinstance(image, BufferedWriter)
+    assert os.path.dirname(image.name) == "/tmp"
+
+
+@pytest.mark.parametrize(
+    "filename", [None, "test.jpg", "test.png", "test.gif", "test.bmp", "test.svg"]
+)
+def test_get_random_image_with_size(filename):
+    image = get_random_image(size=1000, filename=filename)
+    assert isinstance(image, BytesIO)
+    assert len(image.read()) == 1000
+
+
+def test_get_random_image_with_filename():
+    image = get_random_image(filename="test.qwe", path="/tmp")
+    assert os.path.exists("/tmp/test.qwe")
+    assert image.closed

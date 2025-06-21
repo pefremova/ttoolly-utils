@@ -1,10 +1,10 @@
-from datetime import datetime, timedelta
 import io
 import os
 import random
 import re
 import string
-from typing import Literal, IO, Optional
+from datetime import datetime, timedelta
+from typing import IO, Literal, Optional
 from xml.etree import ElementTree
 
 from ttoolly_utils.utils import convert_size_to_bytes
@@ -63,6 +63,9 @@ def get_random_color(color_type: Literal["rgb", "hex"] = "rgb") -> str:
         return f"rgb({random.randint(1, 255)}, {random.randint(1, 255)}, {random.randint(1, 255)})"
     if color_type == "hex":
         return "#%06x" % random.randint(0, 0xFFFFFF)
+    raise NotImplementedError(
+        f"Color type '{color_type}' is not supported. Use 'rgb' or 'hex'."
+    )
 
 
 def get_random_datetime_value(
@@ -226,6 +229,7 @@ def get_random_image(
     else:
         f = io.BytesIO()
         f.write(content)
+        f.seek(0)
     return f
 
 
@@ -246,7 +250,9 @@ def get_random_img_content(
     try:
         from PIL import Image, ImageDraw
     except ImportError:
-        raise ImportError("Pillow required. Install ttoolly as ttoolly[images]")
+        raise ImportError(
+            "Pillow required. Install ttoolly-utils as ttoolly-utils[images]"
+        )
     size = convert_size_to_bytes(size)
     image = Image.new("RGB", (width, height), get_random_color("hex"))
     draw = ImageDraw.Draw(image)
